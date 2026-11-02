@@ -19,7 +19,7 @@ set "CSKY_OBJDUMP=C:\tools\csky-elf-objdump.exe"
 build.bat
 ```
 
-Обычный MIPS objdump для этой прошивки не подходит. Запуск BAT на настоящей Windows пока не проверен; его Python-этапы и 35 тестов проверены в Linux с Python 3.12.
+Обычный MIPS objdump для этой прошивки не подходит. Запуск BAT на настоящей Windows пока не проверен; его Python-этапы и 43 теста проверены в Linux с Python 3.12.
 
 ## Что находится внутри
 
@@ -33,6 +33,7 @@ build.bat
 | `Romsat_T8020HD_Codex_Full_Project.zip` | Все первоначальные наработки, исходная прошивка и референс, без изменений |
 | `build/overlay` | Подготовленные XML/BMP/JPEG главного меню, YouTube и MeeCast |
 | `build/menu_callback.ck610` | Новый обработчик меню: 336 байт CK610, отдельно от прошивки |
+| `build/menu_create_finalizer.ck610` | 224 байта завершающей инициализации фокуса/плиток; связанный BSR описан в манифесте |
 | `build/theme_RESEARCH_ONLY.cramfs` | Проверенная файловая система ресурсов; не файл USB-обновления |
 | `build/patch_manifest.json` | Точные байты патча, хеши, размеры и препятствия выпуску BIN |
 | `build/youtube` | Превью YouTube и экспериментальная правка версии клиента |

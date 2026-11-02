@@ -4,6 +4,7 @@ Emits actual CK610 instructions, not a PC-only menu model. It is NOT installed
 into eCos or a flash BIN. GUI/service calls require device-side validation.
 """
 import struct
+import hashlib
 from csky import BASE
 
 START = 0x900261a8
@@ -15,6 +16,7 @@ NATIVE_DISPATCH = 0x900557a8
 WINDOW_KEY = 0x90025ed8
 PHONE_KEY = 48  # GUIK_0, also reachable through the native MeeCast key map
 PHONE_WINDOW = 0x904bcff4  # wnd_meecastqr; native dispatcher loads it at 0x900559b0
+CREATE_TAIL = 0x90025d48
 
 
 class Assembler:
@@ -145,6 +147,18 @@ def build_hook():
     a.mov(3,13); a.call(WINDOW_KEY)
     a.imm(7,13); a.mem('sth',7,13,8); a.branch('br','handled')
     a.label('paint')
+    emit_paint(a)
+    a.label('handled'); a.imm(2,0); a.branch('br','return')
+    # EXIT/BACK and other keys propagate to the existing window keypress.
+    a.label('unhandled'); a.imm(2,1)
+    a.label('return')
+    for r in reversed(range(8,16)): a.mem('ldw',r,0,(r-8)*4)
+    a.addi(0,32); a.emit(0x00cf)
+    return a.finish(), a.labels
+
+
+def emit_paint(a):
+    """r8 = selected tile, r14 = STATE pointer; preserve both through calls."""
     a.mem('stw',8,14)
     a.literal(10,0x905637b4); a.literal(11,0x905637ec); a.literal(12,0x905637d0)
     a.imm(9,0)
@@ -158,10 +172,53 @@ def build_hook():
     a.literal(3,0x904f5eb4); a.call(SET_PROPERTY)
     a.addi(9,1); a.cmpi(9,6); a.branch('bt','loop')
     a.literal(2,0x904b872c); a.imm(3,0); a.call(FLUSH)
-    a.label('handled'); a.imm(2,0); a.branch('br','return')
-    # EXIT/BACK and other keys propagate to the existing window keypress.
-    a.label('unhandled'); a.imm(2,1)
-    a.label('return')
+
+
+def build_create_hook(ecos):
+    """Replace only original create's movi r2,0 with bsr to a finalizer.
+
+    All original create/cleanup work still executes. The new finalizer lives
+    after the new key callback, inside the now-replaced old key function.
+    This does not write an eCos or BIN file.
+    """
+    if ecos[CREATE_TAIL-BASE:CREATE_TAIL-BASE+2] != bytes.fromhex('0260'):
+        raise ValueError('Unexpected original create epilogue')
+    if hashlib.sha256(ecos).hexdigest() != '64c58484ffaa86996a367c060fcaa46c841f3bcca6d4368b02c17c8b39bf22dc':
+        raise ValueError('Unsupported eCos revision for create finalizer')
+    hook,_ = build_hook()
+    start=START+len(hook)
+    delta=start-(CREATE_TAIL+2)
+    if delta%2 or not -1024<=delta//2<=1023:
+        raise ValueError('Create finalizer BSR out of range')
+    branch=struct.pack('<H',0xf800|((delta//2)&0x7ff))
+    a=Assembler(base=start)
+    a.addi(0,-32)
+    for r in range(8,16):a.mem('stw',r,0,(r-8)*4)
+    a.literal(14,STATE);a.mem('ldw',8,14)
+    a.imm(7,5);a.hs(7,8);a.branch('bt','valid')
+    a.imm(8,0)
+    a.label('valid')
+    # Eliminate old nested-category flags and list selection before focusing.
+    a.literal(7,0x90651640);a.imm(6,0)
+    for offset in range(5):a.mem('stb',6,7,offset)
+    a.literal(7,0x9064a730);a.mem('stw',6,7)
+    a.literal(7,0x9064a73c);a.imm(6,1);a.mem('stw',6,7)
+    a.literal(2,0x904b8740);a.literal(3,0x904ef288);a.literal(4,0x9064a730)
+    a.call(SET_PROPERTY)
+    # Original create may re-show the old seventh category or activation hint.
+    for widget in (0x904bfa08,0x904bf880):
+        a.literal(2,widget);a.literal(3,0x904f5d18);a.literal(4,0x904b8454)
+        a.call(SET_PROPERTY)
+    a.literal(2,0x904b8740);a.call(0x9024e524)
+    emit_paint(a)
+    a.imm(2,0)
     for r in reversed(range(8,16)): a.mem('ldw',r,0,(r-8)*4)
     a.addi(0,32); a.emit(0x00cf)
-    return a.finish(), a.labels
+    code_end=a.base+len(a.words)*2
+    binary=a.finish()
+    return binary,dict(address=start,length=len(binary),envelope_end=LIMIT,
+                       code_end=code_end,
+                       branch_pc=CREATE_TAIL,original_branch_bytes='0260',
+                       replacement_branch_bytes=branch.hex(),
+                       original_helper_bytes=ecos[start-BASE:start-BASE+len(binary)].hex(),
+                       replacement_helper_bytes=binary.hex(),hardware_verified=False)

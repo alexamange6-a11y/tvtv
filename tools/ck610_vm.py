@@ -46,7 +46,7 @@ class Runner:
         allowed = {0x9005577c, SET_PROPERTY, 0x900557a8, 0x90024dd8,
                    0x9024df6c, WINDOW_KEY, 0x9024e63c, 0x9004274c,
                    0x9024e49c,0x900d2fa0,0x90381b4c,0x90010a1c,0x90012f1c,
-                   0x900077e4,0x90008118,0x900118a0}
+                   0x900077e4,0x90008118,0x900118a0,0x9024e524}
         if target not in allowed: raise ValueError(f'Unstubbed call {target:#x}')
         call = dict(target=target, args=self.r[2:8])
         if target == SET_PROPERTY and self.r[2] == 0x904b8740:
@@ -170,3 +170,22 @@ class MeeCastKeyRunner(Runner):
             self.pc = START
         else:
             super().stub(target)
+
+
+class CreateTailRunner(Runner):
+    """Execute the patched original create epilogue and finalizer.
+
+    Entry assumes earlier native create code already ran. GUI calls are stubs;
+    this does not model the complete creation or asynchronous event lifecycle.
+    """
+    def __init__(self,ecos,hook,helper,patch,selected=0):
+        super().__init__(ecos,hook,selected)
+        self.write(patch['address'],helper)
+        self.write(patch['branch_pc'],bytes.fromhex(patch['replacement_branch_bytes']))
+        self.pc=patch['branch_pc']
+        self.r[0]-=24
+        for offset,reg in ((8,13),(12,14),(16,15)):
+            self.store(self.r[0]+offset,self.initial_registers[reg],4)
+        for offset in range(5):self.store(0x90651640+offset,1,1)
+        self.store(0x9064a730,7,4)
+        self.store(0x9064a73c,0,4)

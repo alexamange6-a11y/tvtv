@@ -41,10 +41,10 @@ def create_theme(inputs):
             i = WIDGETS.index(name.removeprefix('win_t2_main_menu_title_'))
             prop.find('rect').text = f'[{47+i*155},310,112,137]'
         elif name == 'win_t2_main_menu_list':
-            # Keep the list focused for event delivery but place its paint area
-            # off the visible six-tile band. Zero-area list delivery is a device
-            # integration question, explicitly NOT marked hardware verified.
-            prop.find('rect').text = '[0,0,0,0]'
+            # Keep a nonzero event target in the bottom corner. The create
+            # finalizer explicitly focuses it; actual GUI delivery still needs
+            # device validation. Its paint area does not cover the tile band.
+            prop.find('rect').text = '[1023,575,1,1]'
         elif name in ('win_t2_main_menu_background','win_t2_main_menu_exit_btn',
                       'win_t2_main_menu_return_txt','win_t2_main_menu_ok_btn',
                       'win_t2_main_menu_ok_txt'):

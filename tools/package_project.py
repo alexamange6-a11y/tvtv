@@ -19,7 +19,7 @@ def package_project(destination=None):
     artifacts = ROOT/'build/romsat_research_artifacts_NOT_FLASHABLE.zip'
     if not artifacts.is_file():
         raise ValueError('First run build.bat or tools/build.py')
-    sources = [ROOT/name for name in ('START_HERE_RU.md','README_RU.md',
+    sources = [ROOT/name for name in ('.gitignore','START_HERE_RU.md','README_RU.md',
                'build.bat','requirements.txt','Romsat_T8020HD_Codex_Full_Project.zip')]
     for directory in ('tools','tests','reports'):
         sources += [p for p in sorted((ROOT/directory).rglob('*'))

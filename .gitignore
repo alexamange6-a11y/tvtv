@@ -1,5 +1,6 @@
 /inputs/
 /build/
+/private_backups/
 /.venv/
 __pycache__/
 .pytest_cache/

@@ -1,3 +1,8 @@
+test_corruption_truncation_and_layout_are_rejected (test_dump_analysis.DumpAnalysisTests.test_corruption_truncation_and_layout_are_rejected) ... ok
+test_full_capacity_is_not_a_recovery_guarantee (test_dump_analysis.DumpAnalysisTests.test_full_capacity_is_not_a_recovery_guarantee) ... ok
+test_patch_preimages_reject_changed_code_with_valid_outer_crc (test_dump_analysis.DumpAnalysisTests.test_patch_preimages_reject_changed_code_with_valid_outer_crc) ... ok
+test_private_data_changed_beyond_vendor_used_length_is_detected (test_dump_analysis.DumpAnalysisTests.test_private_data_changed_beyond_vendor_used_length_is_detected) ... ok
+test_usb_export_omission_is_not_filled_or_called_complete (test_dump_analysis.DumpAnalysisTests.test_usb_export_omission_is_not_filled_or_called_complete) ... ok
 test_command_table_and_native_effects (test_meecast.MeeCastTests.test_command_table_and_native_effects) ... ok
 test_hash_gated_native_startup_and_threads (test_meecast.MeeCastTests.test_hash_gated_native_startup_and_threads) ... ok
 test_key_mapping_is_raw_and_complete (test_meecast.MeeCastTests.test_key_mapping_is_raw_and_complete) ... ok
@@ -10,6 +15,9 @@ test_layout_is_bounded_and_uses_real_store_icons (test_meecast_theme.MeeCastThem
 test_native_widget_and_signal_contracts_are_unchanged (test_meecast_theme.MeeCastThemeTests.test_native_widget_and_signal_contracts_are_unchanged) ... ok
 test_preview_is_explicitly_separate_from_firmware_overlay (test_meecast_theme.MeeCastThemeTests.test_preview_is_explicitly_separate_from_firmware_overlay) ... ok
 test_static_instructions_have_three_exact_translations (test_meecast_theme.MeeCastThemeTests.test_static_instructions_have_three_exact_translations) ... ok
+test_actual_epilogue_focus_flags_images_stack_and_registers (test_menu_create.MenuCreateTests.test_actual_epilogue_focus_flags_images_stack_and_registers) ... ok
+test_native_return_branch_and_nonoverlapping_code_ranges (test_menu_create.MenuCreateTests.test_native_return_branch_and_nonoverlapping_code_ranges) ... ok
+test_resource_event_target_has_nonzero_bounded_area (test_menu_create.MenuCreateTests.test_resource_event_target_has_nonzero_bounded_area) ... ok
 test_actual_native_registrations (test_project.ProjectTests.test_actual_native_registrations) ... ok
 test_cramfs_addition_metadata_and_preservation (test_project.ProjectTests.test_cramfs_addition_metadata_and_preservation) ... ok
 test_forced_cramfs_repack_is_semantically_identical (test_project.ProjectTests.test_forced_cramfs_repack_is_semantically_identical) ... ok
@@ -35,6 +43,6 @@ test_real_four_results_and_tv_aspect (test_youtube.YouTubeTests.test_real_four_r
 test_version_fix_bounded_and_reversible (test_youtube.YouTubeTests.test_version_fix_bounded_and_reversible) ... ok
 
 ----------------------------------------------------------------------
-Ran 35 tests in 5.051s
+Ran 43 tests in 8.959s
 
 OK
