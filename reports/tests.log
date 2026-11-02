@@ -1,0 +1,40 @@
+test_command_table_and_native_effects (test_meecast.MeeCastTests.test_command_table_and_native_effects) ... ok
+test_hash_gated_native_startup_and_threads (test_meecast.MeeCastTests.test_hash_gated_native_startup_and_threads) ... ok
+test_key_mapping_is_raw_and_complete (test_meecast.MeeCastTests.test_key_mapping_is_raw_and_complete) ... ok
+test_original_phone_parser_drives_actual_menu_instructions (test_meecast.MeeCastTests.test_original_phone_parser_drives_actual_menu_instructions) ... ok
+test_ports_bounds_and_wire_client_are_conservative (test_meecast.MeeCastTests.test_ports_bounds_and_wire_client_are_conservative) ... ok
+test_wrong_revision_is_rejected_and_ranges_are_bounded (test_meecast.MeeCastTests.test_wrong_revision_is_rejected_and_ranges_are_bounded) ... ok
+test_youtube_path_reports_no_key_material (test_meecast.MeeCastTests.test_youtube_path_reports_no_key_material) ... ok
+test_combined_cramfs_still_fits_without_new_assets (test_meecast_theme.MeeCastThemeTests.test_combined_cramfs_still_fits_without_new_assets) ... ok
+test_layout_is_bounded_and_uses_real_store_icons (test_meecast_theme.MeeCastThemeTests.test_layout_is_bounded_and_uses_real_store_icons) ... ok
+test_native_widget_and_signal_contracts_are_unchanged (test_meecast_theme.MeeCastThemeTests.test_native_widget_and_signal_contracts_are_unchanged) ... ok
+test_preview_is_explicitly_separate_from_firmware_overlay (test_meecast_theme.MeeCastThemeTests.test_preview_is_explicitly_separate_from_firmware_overlay) ... ok
+test_static_instructions_have_three_exact_translations (test_meecast_theme.MeeCastThemeTests.test_static_instructions_have_three_exact_translations) ... ok
+test_actual_native_registrations (test_project.ProjectTests.test_actual_native_registrations) ... ok
+test_cramfs_addition_metadata_and_preservation (test_project.ProjectTests.test_cramfs_addition_metadata_and_preservation) ... ok
+test_forced_cramfs_repack_is_semantically_identical (test_project.ProjectTests.test_forced_cramfs_repack_is_semantically_identical) ... ok
+test_hook_back_propagates_no_recent (test_project.ProjectTests.test_hook_back_propagates_no_recent) ... ok
+test_hook_real_native_network_dispatch (test_project.ProjectTests.test_hook_real_native_network_dispatch) ... ok
+test_hook_size_and_direction_keys (test_project.ProjectTests.test_hook_size_and_direction_keys) ... ok
+test_hook_stale_category_six_clamped (test_project.ProjectTests.test_hook_stale_category_six_clamped) ... ok
+test_hook_tv_media_settings (test_project.ProjectTests.test_hook_tv_media_settings) ... ok
+test_internal_checksums_reject_corruption (test_project.ProjectTests.test_internal_checksums_reject_corruption) ... ok
+test_kernel_actual_lzma_romfs_rebuild (test_project.ProjectTests.test_kernel_actual_lzma_romfs_rebuild) ... ok
+test_original_corruption_rejected (test_project.ProjectTests.test_original_corruption_rejected) ... ok
+test_original_dispatcher_instructions_reach_native_apps (test_project.ProjectTests.test_original_dispatcher_instructions_reach_native_apps) ... ok
+test_original_roundtrip_and_checksums (test_project.ProjectTests.test_original_roundtrip_and_checksums) ... ok
+test_phone_shortcut_opens_actual_native_meecast_window (test_project.ProjectTests.test_phone_shortcut_opens_actual_native_meecast_window) ... ok
+test_repack_changed_resources_all_files_preserved (test_project.ProjectTests.test_repack_changed_resources_all_files_preserved) ... ok
+test_repack_overflow_and_unknown_path_rejected (test_project.ProjectTests.test_repack_overflow_and_unknown_path_rejected) ... ok
+test_six_tile_theme_resources_and_cramfs_fit (test_project.ProjectTests.test_six_tile_theme_resources_and_cramfs_fit) ... ok
+test_assets_registry_and_combined_partition_fit (test_youtube.YouTubeTests.test_assets_registry_and_combined_partition_fit) ... ok
+test_callback_and_widget_contracts_unchanged (test_youtube.YouTubeTests.test_callback_and_widget_contracts_unchanged) ... ok
+test_diagnostic_cipher_adaptive_and_denial (test_youtube.YouTubeTests.test_diagnostic_cipher_adaptive_and_denial) ... ok
+test_diagnostic_direct_muxed_and_expiry (test_youtube.YouTubeTests.test_diagnostic_direct_muxed_and_expiry) ... ok
+test_real_four_results_and_tv_aspect (test_youtube.YouTubeTests.test_real_four_results_and_tv_aspect) ... ok
+test_version_fix_bounded_and_reversible (test_youtube.YouTubeTests.test_version_fix_bounded_and_reversible) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 5.051s
+
+OK

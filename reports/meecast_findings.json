@@ -1,0 +1,554 @@
+{
+  "status": "EXISTING_VENDOR_SERVICE_RESEARCH_ONLY",
+  "ecos_sha256": "64c58484ffaa86996a367c060fcaa46c841f3bcca6d4368b02c17c8b39bf22dc",
+  "architecture": "C-SKY CK610 ABI v1, little endian",
+  "network_io_performed": false,
+  "modified_firmware_emitted": false,
+  "hardware_verified": false,
+  "service": {
+    "name": "MeeCast",
+    "startup_calls": [
+      {
+        "pc": 2416250406,
+        "target": 2416002320,
+        "literal_offset": 331464,
+        "instruction": "jsri"
+      },
+      {
+        "pc": 2416263472,
+        "target": 2416002516,
+        "literal_offset": 344652,
+        "instruction": "jsri"
+      }
+    ],
+    "threads": [
+      {
+        "name": "net_play_task",
+        "entry": 2416000720,
+        "name_load": {
+          "pc": 2416002338,
+          "target": 2420884832,
+          "literal_offset": 83280,
+          "instruction": "lrw"
+        },
+        "entry_load": {
+          "pc": 2416002342,
+          "target": 2416000720,
+          "literal_offset": 83288,
+          "instruction": "lrw"
+        },
+        "create_call": {
+          "pc": 2416002350,
+          "target": 2416411832,
+          "literal_offset": 83292,
+          "instruction": "jsri"
+        }
+      },
+      {
+        "name": "net_play_task1",
+        "entry": 2415997732,
+        "name_load": {
+          "pc": 2416002352,
+          "target": 2420884848,
+          "literal_offset": 83296,
+          "instruction": "lrw"
+        },
+        "entry_load": {
+          "pc": 2416002356,
+          "target": 2415997732,
+          "literal_offset": 83304,
+          "instruction": "lrw"
+        },
+        "create_call": {
+          "pc": 2416002364,
+          "target": 2416411832,
+          "literal_offset": 83292,
+          "instruction": "jsri"
+        }
+      },
+      {
+        "name": "apps_service",
+        "entry": 2416002412,
+        "name_load": {
+          "pc": 2416002542,
+          "target": 2420885308,
+          "literal_offset": 83476,
+          "instruction": "lrw"
+        },
+        "entry_load": {
+          "pc": 2416002546,
+          "target": 2416002412,
+          "literal_offset": 83484,
+          "instruction": "lrw"
+        },
+        "create_call": {
+          "pc": 2416002554,
+          "target": 2416411832,
+          "literal_offset": 83488,
+          "instruction": "jsri"
+        }
+      }
+    ],
+    "ports": [
+      {
+        "pc": 2416000822,
+        "target": 4294961225,
+        "literal_offset": 81884,
+        "instruction": "lrw",
+        "role": "command_dispatch_receive",
+        "stored_halfword": 59465,
+        "port": 18920
+      },
+      {
+        "pc": 2415999714,
+        "target": 4294961481,
+        "literal_offset": 80684,
+        "instruction": "lrw",
+        "role": "command_dispatch_reply",
+        "stored_halfword": 59721,
+        "port": 18921
+      },
+      {
+        "pc": 2415997780,
+        "target": 4294966345,
+        "literal_offset": 78816,
+        "instruction": "lrw",
+        "role": "secondary_receive",
+        "stored_halfword": 64585,
+        "port": 18940
+      },
+      {
+        "pc": 2415997466,
+        "target": 4294966601,
+        "literal_offset": 78436,
+        "instruction": "lrw",
+        "role": "secondary_reply",
+        "stored_halfword": 64841,
+        "port": 18941
+      }
+    ],
+    "commands": [
+      {
+        "index": 0,
+        "name": "key",
+        "name_address": 2421474820,
+        "parser": 2415998204,
+        "reply_builder": 2415999624
+      },
+      {
+        "index": 1,
+        "name": "play",
+        "name_address": 2420885292,
+        "parser": 2415998640,
+        "reply_builder": 2415999624
+      },
+      {
+        "index": 2,
+        "name": "play1",
+        "name_address": 2420884712,
+        "parser": 2415998640,
+        "reply_builder": 2415999624
+      },
+      {
+        "index": 3,
+        "name": "text",
+        "name_address": 2421197256,
+        "parser": 2415998324,
+        "reply_builder": 2415999624
+      },
+      {
+        "index": 4,
+        "name": "scan",
+        "name_address": 2421323504,
+        "parser": 2415997216,
+        "reply_builder": 2415999624
+      },
+      {
+        "index": 5,
+        "name": "conn",
+        "name_address": 2420885300,
+        "parser": 2415997220,
+        "reply_builder": 2415999624
+      },
+      {
+        "index": 6,
+        "name": "info",
+        "name_address": 2420906832,
+        "parser": 2415997224,
+        "reply_builder": 2416001524
+      },
+      {
+        "index": 7,
+        "name": "iptv",
+        "name_address": 2420873936,
+        "parser": 2415999980,
+        "reply_builder": 2416001084
+      },
+      {
+        "index": 8,
+        "name": "apikey",
+        "name_address": 2420881888,
+        "parser": 2415998008,
+        "reply_builder": 2415999624
+      }
+    ],
+    "registered_gui_callbacks": {
+      "app_t2_meecast_qr_create": 2416016840,
+      "app_t2_meecast_qr_destroy": 2416017000,
+      "app_t2_meecast_qr_keypress": 2416017108,
+      "app_full_screen_meecast_create": 2415965088,
+      "app_full_screen_meecast_destroy": 2415965600,
+      "app_full_screen_meecast_got_focus": 2415965696,
+      "app_full_screen_meecast_keypress": 2415965092
+    },
+    "qr_window": "wnd_meecastqr",
+    "player_window": "wnd_full_screen_meecast"
+  },
+  "remote_keys": {
+    "table_address": 2420825400,
+    "rows": 146,
+    "mapped_rows": 58,
+    "important_raw_mappings": {
+      "raw_0x01": 104,
+      "raw_0x02": 117,
+      "raw_0x03": 114,
+      "raw_0x04": 118,
+      "digit_0": 48,
+      "digit_1": 49,
+      "digit_9": 57,
+      "ok": 13,
+      "up": 273,
+      "down": 274,
+      "right": 276,
+      "left": 275,
+      "back": 109
+    },
+    "all_mapped_rows": [
+      {
+        "remote_id": 1,
+        "firmware_key": 104
+      },
+      {
+        "remote_id": 2,
+        "firmware_key": 117
+      },
+      {
+        "remote_id": 3,
+        "firmware_key": 114
+      },
+      {
+        "remote_id": 4,
+        "firmware_key": 118
+      },
+      {
+        "remote_id": 5,
+        "firmware_key": 48
+      },
+      {
+        "remote_id": 6,
+        "firmware_key": 49
+      },
+      {
+        "remote_id": 7,
+        "firmware_key": 50
+      },
+      {
+        "remote_id": 8,
+        "firmware_key": 51
+      },
+      {
+        "remote_id": 9,
+        "firmware_key": 52
+      },
+      {
+        "remote_id": 10,
+        "firmware_key": 53
+      },
+      {
+        "remote_id": 11,
+        "firmware_key": 54
+      },
+      {
+        "remote_id": 12,
+        "firmware_key": 55
+      },
+      {
+        "remote_id": 13,
+        "firmware_key": 56
+      },
+      {
+        "remote_id": 14,
+        "firmware_key": 57
+      },
+      {
+        "remote_id": 16,
+        "firmware_key": 13
+      },
+      {
+        "remote_id": 17,
+        "firmware_key": 273
+      },
+      {
+        "remote_id": 18,
+        "firmware_key": 274
+      },
+      {
+        "remote_id": 19,
+        "firmware_key": 276
+      },
+      {
+        "remote_id": 20,
+        "firmware_key": 275
+      },
+      {
+        "remote_id": 21,
+        "firmware_key": 109
+      },
+      {
+        "remote_id": 23,
+        "firmware_key": 97
+      },
+      {
+        "remote_id": 24,
+        "firmware_key": 280
+      },
+      {
+        "remote_id": 25,
+        "firmware_key": 281
+      },
+      {
+        "remote_id": 26,
+        "firmware_key": 105
+      },
+      {
+        "remote_id": 27,
+        "firmware_key": 102
+      },
+      {
+        "remote_id": 28,
+        "firmware_key": 19
+      },
+      {
+        "remote_id": 29,
+        "firmware_key": 112
+      },
+      {
+        "remote_id": 31,
+        "firmware_key": 101
+      },
+      {
+        "remote_id": 34,
+        "firmware_key": 400
+      },
+      {
+        "remote_id": 35,
+        "firmware_key": 404
+      },
+      {
+        "remote_id": 36,
+        "firmware_key": 401
+      },
+      {
+        "remote_id": 37,
+        "firmware_key": 403
+      },
+      {
+        "remote_id": 39,
+        "firmware_key": 116
+      },
+      {
+        "remote_id": 42,
+        "firmware_key": 282
+      },
+      {
+        "remote_id": 52,
+        "firmware_key": 115
+      },
+      {
+        "remote_id": 76,
+        "firmware_key": 316
+      },
+      {
+        "remote_id": 77,
+        "firmware_key": 113
+      },
+      {
+        "remote_id": 81,
+        "firmware_key": 27
+      },
+      {
+        "remote_id": 82,
+        "firmware_key": 43
+      },
+      {
+        "remote_id": 83,
+        "firmware_key": 45
+      },
+      {
+        "remote_id": 85,
+        "firmware_key": 302
+      },
+      {
+        "remote_id": 86,
+        "firmware_key": 291
+      },
+      {
+        "remote_id": 87,
+        "firmware_key": 290
+      },
+      {
+        "remote_id": 88,
+        "firmware_key": 98
+      },
+      {
+        "remote_id": 89,
+        "firmware_key": 122
+      },
+      {
+        "remote_id": 99,
+        "firmware_key": 290
+      },
+      {
+        "remote_id": 100,
+        "firmware_key": 291
+      },
+      {
+        "remote_id": 102,
+        "firmware_key": 27
+      },
+      {
+        "remote_id": 103,
+        "firmware_key": 289
+      },
+      {
+        "remote_id": 129,
+        "firmware_key": 108
+      },
+      {
+        "remote_id": 130,
+        "firmware_key": 110
+      },
+      {
+        "remote_id": 134,
+        "firmware_key": 283
+      },
+      {
+        "remote_id": 135,
+        "firmware_key": 284
+      },
+      {
+        "remote_id": 136,
+        "firmware_key": 277
+      },
+      {
+        "remote_id": 141,
+        "firmware_key": 403
+      },
+      {
+        "remote_id": 143,
+        "firmware_key": 292
+      },
+      {
+        "remote_id": 145,
+        "firmware_key": 111
+      },
+      {
+        "remote_id": 146,
+        "firmware_key": 107
+      }
+    ],
+    "effect": "Mapped values are enqueued into the firmware system-input ring"
+  },
+  "pushed_playback": {
+    "handler": 2415998640,
+    "player_open": 2415964280,
+    "maximum_linked_records": 20,
+    "service_compatibility_verified": false,
+    "youtube_cast_verified": false
+  },
+  "youtube_phone_path": {
+    "command": "apikey",
+    "handler": 2415998008,
+    "runtime_path": "/home/gx/meecast_youtube_apikey.xml",
+    "copy_limit_bytes_excluding_nul": 127,
+    "api_key_values_included": false,
+    "api_key_values_read": false
+  },
+  "payload_bounds": {
+    "receive_buffer_bytes": 16384,
+    "key_payload_length_field": "big-endian u32 at request offset 12",
+    "key_value_location": "request offset 16; 1, 2 or first 4 bytes are decoded",
+    "differential_xor": "seed 0xcc; each output byte is current input XOR previous input"
+  },
+  "code_evidence": {
+    "command_table_load": {
+      "pc": 2416000766,
+      "target": 2420825240,
+      "literal_offset": 81860,
+      "instruction": "lrw"
+    },
+    "key_enqueue": {
+      "pc": 2415998176,
+      "target": 2418432680,
+      "literal_offset": 79096,
+      "instruction": "jsri"
+    },
+    "play_opens_meecast_player": {
+      "pc": 2415998552,
+      "target": 2415964280,
+      "literal_offset": 79532,
+      "instruction": "jsri"
+    },
+    "apikey_deobfuscation": {
+      "pc": 2415998076,
+      "target": 2415997976,
+      "instruction": "bsr"
+    },
+    "play_deobfuscation": {
+      "pc": 2415998812,
+      "target": 2415997976,
+      "instruction": "bsr"
+    },
+    "apikey_copy": {
+      "pc": 2415998080,
+      "target": 2415986064,
+      "literal_offset": 79024,
+      "instruction": "jsri"
+    },
+    "apikey_persist": {
+      "pc": 2415998082,
+      "target": 2415986424,
+      "literal_offset": 79028,
+      "instruction": "jsri"
+    },
+    "qr_window_load": {
+      "pc": 2416269744,
+      "target": 2420887540,
+      "literal_offset": 350816,
+      "instruction": "lrw"
+    }
+  },
+  "wire_codec": {
+    "available": false,
+    "lan_client_available": false,
+    "reason": "Request bytes 4..11, message framing and validation semantics are not fully proven by the audited paths",
+    "required_next_evidence": "Packet capture from a real MeeCast app paired with this firmware"
+  },
+  "standard_cast_protocols": {
+    "google_cast_receiver_confirmed": false,
+    "ascii_markers_searched": [
+      "CHROMECAST",
+      "CASTV2",
+      "DIAL",
+      "SSDP",
+      "UPNP",
+      "MDNS",
+      "BONJOUR",
+      "AIRPLAY"
+    ],
+    "ascii_markers_found": [
+      "DIAL"
+    ],
+    "note": "Marker absence is supporting evidence only; it is not a proof that arbitrary binary protocol code is absent"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "status": "EXPERIMENTAL_UNVERIFIED_PLAYBACK",
+  "symptom": "Lists work; video does not start",
+  "original_sha256": "64c58484ffaa86996a367c060fcaa46c841f3bcca6d4368b02c17c8b39bf22dc",
+  "patched_sha256": "e11bb998d4130527b06f6475f6b336800eac48ea1b0b9806cb2a959e9bf63a01",
+  "confirmed_issue": "Android JSON clientVersion, User-Agent and HTTP header disagree",
+  "original": {
+    "json_client_version": "19.09.4",
+    "user_agent": "com.google.android.youtube/19.09.04 (Linux; U; Android 11) gzip",
+    "version_header": "X-YouTube-Client-Version: 18.11.34"
+  },
+  "proposed_version": "19.09.4",
+  "changes": [
+    {
+      "offset": 5088392,
+      "address": 2421007496,
+      "before_hex": "636f6d2e676f6f676c652e616e64726f69642e796f75747562652f31392e30392e303420284c696e75783b20553b20416e64726f69642031312920677a697000",
+      "after_hex": "636f6d2e676f6f676c652e616e64726f69642e796f75747562652f31392e30392e3420284c696e75783b20553b20416e64726f69642031312920677a69700000"
+    },
+    {
+      "offset": 5088484,
+      "address": 2421007588,
+      "before_hex": "582d596f75547562652d436c69656e742d56657273696f6e3a2031382e31312e333400",
+      "after_hex": "582d596f75547562652d436c69656e742d56657273696f6e3a2031392e30392e340000"
+    }
+  ],
+  "code_loads": [
+    {
+      "pc": 2417056862,
+      "literal_address": 2421007468
+    },
+    {
+      "pc": 2417056888,
+      "literal_address": 2421007496
+    },
+    {
+      "pc": 2417057060,
+      "literal_address": 2421007496
+    },
+    {
+      "pc": 2417057066,
+      "literal_address": 2421007560
+    },
+    {
+      "pc": 2417057070,
+      "literal_address": 2421007588
+    }
+  ],
+  "ios_profile_changed": false,
+  "root_cause_proven": false,
+  "service_tested": false,
+  "complete_firmware_emitted": false,
+  "remaining_checks": [
+    "Actual player response and playabilityStatus",
+    "Direct URL versus signatureCipher and challenge requirements",
+    "Available progressive AVC/AAC versus separate adaptive tracks",
+    "Video CDN HTTP result, expiry and device TLS/clock",
+    "Actual decoder compatibility and device recovery"
+  ]
+}
