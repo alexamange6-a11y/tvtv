@@ -105,6 +105,19 @@
     "superblock_checksum_valid": true,
     "inode_checksum_valid": true
   },
+  "partition_table": {
+    "size": 512,
+    "crc_offset": 508,
+    "crc_covered_bytes": 508,
+    "stored_crc32": 3038471687,
+    "calculated_crc32": 3038471687,
+    "crc_valid": true,
+    "tail_bytes_1f9_1fb": [
+      1,
+      1,
+      102
+    ]
+  },
   "cramfs": {
     "size": 770048,
     "files": 435,

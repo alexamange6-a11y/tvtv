@@ -9,6 +9,7 @@ from hook import START, STATE, SET_PROPERTY, WINDOW_KEY
 
 
 class Runner:
+    max_steps = 2000
     def __init__(self, ecos, hook, selected=0, key=13, event_type=2, native_dispatch=False, youtube_preference=0):
         self.rom = ecos
         self.overlay = {}
@@ -79,10 +80,10 @@ class Runner:
         for i in range(2,8): self.r[i] = 0xcccc0000+i
         self.r[2] = result
 
-    def run(self):
-        while self.pc != 0xdeadbeee:
+    def run(self, stop_at=()):
+        while self.pc != 0xdeadbeee and self.pc not in stop_at:
             self.steps += 1
-            if self.steps > 2000: raise ValueError('Instruction budget exceeded')
+            if self.steps > self.max_steps: raise ValueError('Instruction budget exceeded')
             pc = self.pc
             word = self.load(pc,2)
             self.pc += 2
@@ -90,8 +91,15 @@ class Runner:
             top = word >> 12
             if word & 0xff00 == 0x1200:
                 self.r[lo] = self.r[hi]
+            elif word & 0xff00 in (0x0200,0x0a00):
+                if self.carry == (word & 0xff00 == 0x0200):
+                    self.r[lo] = self.r[hi]
             elif word & 0xfff0 == 0x0160:
                 self.r[lo] &= 0xffff
+            elif word & 0xfff0 == 0x01f0:
+                self.r[lo] = ~self.r[lo]
+            elif word & 0xfff0 in (0x0110,0x0120):
+                self.r[1] = (self.r[lo] >> (8 if word & 0xfff0 == 0x0110 else 16)) & 255
             elif word & 0xf800 == 0x6000:
                 self.r[lo] = (word >> 4) & 127
             elif word & 0xfe00 in (0x2000,0x2400):
@@ -99,6 +107,18 @@ class Runner:
                 self.r[lo] += value if word & 0xfe00 == 0x2000 else -value
             elif word & 0xfe00 == 0x2a00:
                 self.carry = self.r[lo] != ((word >> 4) & 31)
+            elif word & 0xfff0 == 0x2c10:
+                if not self.r[1]: raise ValueError('Unsigned division by zero')
+                self.r[lo] //= self.r[1]
+            elif word & 0xfe00 == 0x2c00:
+                count=(word>>4)&31
+                self.r[lo]=(1<<count)-1 if count else 0xffffffff
+            elif word & 0xfe00 == 0x2e00:
+                self.r[lo] &= (word>>4)&31
+            elif word & 0xfe00 == 0x3200:
+                self.r[lo] = 1<<((word>>4)&31)
+            elif word & 0xfe00 == 0x3400:
+                self.r[lo] |= 1<<((word>>4)&31)
             elif word & 0xff00 in (0x0f00,0x0c00):
                 self.carry = (self.r[lo] != self.r[hi] if word & 0xff00 == 0x0f00
                               else self.r[lo] >= self.r[hi])
@@ -106,8 +126,16 @@ class Runner:
                 self.r[lo] += self.r[hi]
             elif word & 0xff00 == 0x1e00:
                 self.r[lo] |= self.r[hi]
+            elif word & 0xff00 == 0x1700:
+                self.r[lo] ^= self.r[hi]
+            elif word & 0xff00 == 0x1600:
+                self.r[lo] &= self.r[hi]
+            elif word & 0xff00 == 0x0500:
+                self.r[lo] -= self.r[hi]
             elif word & 0xfe00 == 0x3c00:
                 self.r[lo] <<= (word >> 4) & 31
+            elif word & 0xfe00 == 0x3e00:
+                self.r[lo] >>= (word >> 4) & 31
             elif top == 7:
                 pool = (pc+2+(word & 255)*4) & ~3
                 value = self.load(pool,4)
@@ -137,7 +165,7 @@ class Runner:
                 self.pc = self.r[lo]
             else: raise ValueError(f'Unsupported opcode {word:#06x} at {pc:#x}')
             self.r = [r & 0xffffffff for r in self.r]
-        if self.r[0] != self.initial_registers[0] or self.r[8:15] != self.initial_registers[8:15]:
+        if self.pc == 0xdeadbeee and (self.r[0] != self.initial_registers[0] or self.r[8:15] != self.initial_registers[8:15]):
             raise ValueError('Callback corrupts stack/callee-saved registers')
         return self
 
@@ -189,3 +217,139 @@ class CreateTailRunner(Runner):
         for offset in range(5):self.store(0x90651640+offset,1,1)
         self.store(0x9064a730,7,4)
         self.store(0x9064a73c,0,4)
+
+
+class NativeCRCRunner(Runner):
+    """Execute the original pure CRC32 function, including its lookup tables.
+
+    This path makes no GUI/OS calls and uses no service stubs. It still covers
+    only these CK610 instruction forms; it is not a full CPU/device emulator.
+    """
+    max_steps = 100000
+
+    def __init__(self,ecos,data,seed=0,alignment=0):
+        if len(data)>16384 or alignment not in (0,1,2,3):
+            raise ValueError('CRC test buffer limit/alignment')
+        super().__init__(ecos,b'')
+        self.pc=0x900ccbcc
+        self.r[2]=seed&0xffffffff
+        self.r[3]=0x92000100+alignment
+        self.r[4]=len(data)
+        self.write(self.r[3],data)
+
+    def stub(self,target):
+        raise ValueError(f'CRC path unexpectedly calls an external function: {target:#x}')
+
+
+class HeaderCRCRunner(Runner):
+    """Execute the USB validator's original CRC call and comparison block.
+
+    Entry assumes the header was read and its stored BE CRC decoded by earlier
+    code. File I/O, parsing, OEM checks and the flash writer are NOT executed.
+    The CRC function and lookup tables execute without substitution or stubs.
+    """
+    max_steps = 100000
+    SUCCESS = 0x9002eb3e
+    FAILURE = 0x9002ee20
+
+    def __init__(self, ecos, header):
+        if len(header) != 512:
+            raise ValueError('Expected a 512-byte header')
+        super().__init__(ecos,b'')
+        self.pc=0x9002eb26
+        self.write(self.r[0]+0x88,header)
+        self.store(self.r[0]+0x4ac,int.from_bytes(header[508:512],'big'),4)
+
+    def stub(self,target):
+        if target != 0x900ccbcc:
+            raise ValueError(f'Unexpected USB CRC block call: {target:#x}')
+        self.pc=target
+
+    def run(self):
+        super().run(stop_at=(self.SUCCESS,self.FAILURE))
+        self.header_crc_matches=self.pc==self.SUCCESS
+        return self
+
+
+class BootFlashLoopRunner(Runner):
+    """Execute only the original recovery range setup and erase/write loop.
+
+    All SPI/display/log calls are recorded stubs. No device, file reader or
+    flash contents are emulated, read or written by these calls.
+    """
+    max_steps=10000
+    BUFFER=0x94000000
+    END=0x93f72496
+
+    def __init__(self, firmware):
+        super().__init__(b'',b'')
+        self.boot=firmware[:0x20000]
+        self.pc=0x93f725be
+        self.r[12]=self.BUFFER
+
+    def read(self,addr,count):
+        offset=addr-0x93f5e000
+        if 0<=offset and offset+count<=len(self.boot):
+            return self.boot[offset:offset+count]
+        return super().read(addr,count)
+
+    def stub(self,target):
+        if target not in (0x93f68514,0x93f68534,0x93f638dc,0x93f6cc48):
+            raise ValueError(f'Unexpected recovery loop call: {target:#x}')
+        self.calls.append(dict(target=target,args=self.r[2:8]))
+        for i in range(2,8):self.r[i]=0xcccc0000+i
+        self.r[2]=0
+
+    def run(self):
+        return super().run(stop_at=(self.END,))
+
+
+class BootRecoveryReadGateRunner(BootFlashLoopRunner):
+    """Only execute the original caller's comparison of a file-read result.
+
+    The input is an assumed FAT-reader result; no file I/O or flash action is
+    executed. Passing this gate is not permission to flash or CRC acceptance.
+    """
+    ACCEPT=0x93f723e8
+    NEXT_PARTITION=0x93f723e0
+
+    def __init__(self,firmware,read_result):
+        super().__init__(firmware)
+        self.pc=0x93f723dc
+        self.r[2]=read_result&0xffffffff
+        self.r[10]=0xffffffff
+
+    def stub(self,target):
+        raise ValueError(f'Read-result block unexpectedly calls {target:#x}')
+
+    def run(self):
+        Runner.run(self,stop_at=(self.ACCEPT,self.NEXT_PARTITION))
+        self.passed_read_result_gate=self.pc==self.ACCEPT
+        return self
+
+
+class BootFATReadBoundsRunner(BootFlashLoopRunner):
+    """Execute only the FAT-reader's offset/length clamp after file lookup.
+
+    File size, requested read length and offset are supplied as already parsed
+    metadata. Directory lookup, FAT chains and copying are outside this block.
+    """
+    CLAMP_END=0x93f735c4
+    EMPTY_OR_OFFSET_PAST_EOF=0x93f73704
+
+    def __init__(self,firmware,file_size,requested_length=0x400000,offset=0):
+        if any(not 0<=n<=0xffffffff for n in (file_size,requested_length,offset)):
+            raise ValueError('File size/read bounds must fit u32')
+        super().__init__(firmware)
+        self.pc=0x93f735a8
+        self.r[7]=self.r[13]=file_size
+        self.store(self.r[0]+0xaa8,offset,4)
+        self.store(self.r[0]+0xabc,requested_length,4)
+
+    def stub(self,target):
+        raise ValueError(f'FAT read-bounds block unexpectedly calls {target:#x}')
+
+    def run(self):
+        Runner.run(self,stop_at=(self.CLAMP_END,self.EMPTY_OR_OFFSET_PAST_EOF))
+        self.read_end_offset=self.r[13] if self.pc==self.CLAMP_END else None
+        return self

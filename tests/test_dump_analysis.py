@@ -9,6 +9,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'tools'))
 from prepare import prepare
 from dump_analysis import analyze_dump,require_patch_compatible_dump
+from formats import update_partition_table_crc
 
 
 class DumpAnalysisTests(unittest.TestCase):
@@ -50,6 +51,7 @@ class DumpAnalysisTests(unittest.TestCase):
         self.assertTrue(require_patch_compatible_dump(exported,self.factory)['ecos_matches_factory'])
         exported[0x100]^=1
         struct.pack_into('>I',exported,0x2019d,zlib.crc32(exported[:0x1bd40]))
+        exported[0x20000:0x20200]=update_partition_table_crc(exported[0x20000:0x20200])
         self.assertFalse(analyze_dump(exported,self.factory)['factory_prefix_comparison']['byte_identical'])
         with self.assertRaisesRegex(ValueError,'preimages'):
             require_patch_compatible_dump(exported,self.factory)

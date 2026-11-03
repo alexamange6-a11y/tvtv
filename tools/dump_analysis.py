@@ -11,7 +11,7 @@ import json
 import lzma
 import zlib
 
-from formats import Firmware, Cramfs, romfs_check, u32
+from formats import Firmware, Cramfs, romfs_check, u32, partition_table_check
 
 
 def sha(data):
@@ -50,6 +50,7 @@ def analyze_dump(dump, original):
                          present_bytes_sha256=sha(payload) if present else None,
                          matches_factory_present_bytes=payload==compare if present else None,
                          different_bytes=sum(a!=b for a,b in zip(payload,compare))))
+    table = partition_table_check(dump[0x20000:0x20200])
     by_name = {row['name']:row for row in rows}
     kernel = by_name['KERNEL']
     image = dump[kernel['offset']:kernel['offset']+kernel['table_used_bytes']]
@@ -71,6 +72,7 @@ def analyze_dump(dump, original):
     return dict(status='VALIDATED_USB_EXPORT_NOT_RECOVERY_PROOF',size_bytes=len(dump),
                 sha256=sha(dump),factory_sha256=sha(original),partitions=rows,
                 checked_outer_crc_count=sum(row['crc_status']=='valid' for row in rows),
+                partition_table=table,
                 romfs=romfs,ecos_sha256=sha(ecos),ecos_matches_factory=ecos==ref_ecos,
                 cramfs=dict(crc_valid=True,files=len(filesystem.files),size=filesystem.size,
                             file_contents_match_factory=all(

@@ -18,6 +18,10 @@ test_static_instructions_have_three_exact_translations (test_meecast_theme.MeeCa
 test_actual_epilogue_focus_flags_images_stack_and_registers (test_menu_create.MenuCreateTests.test_actual_epilogue_focus_flags_images_stack_and_registers) ... ok
 test_native_return_branch_and_nonoverlapping_code_ranges (test_menu_create.MenuCreateTests.test_native_return_branch_and_nonoverlapping_code_ranges) ... ok
 test_resource_event_target_has_nonzero_bounded_area (test_menu_create.MenuCreateTests.test_resource_event_target_has_nonzero_bounded_area) ... ok
+test_bad_metadata_and_stale_header_crc_are_rejected (test_partition_table.PartitionTableTests.test_bad_metadata_and_stale_header_crc_are_rejected) ... ok
+test_confirmed_tail_crc_distinct_from_table_partition_slot (test_partition_table.PartitionTableTests.test_confirmed_tail_crc_distinct_from_table_partition_slot) ... ok
+test_header_only_recalculation_keeps_unknown_bytes (test_partition_table.PartitionTableTests.test_header_only_recalculation_keeps_unknown_bytes) ... ok
+test_original_crc_instructions_match_standard_vectors_and_alignment (test_partition_table.PartitionTableTests.test_original_crc_instructions_match_standard_vectors_and_alignment) ... ok
 test_actual_native_registrations (test_project.ProjectTests.test_actual_native_registrations) ... ok
 test_cramfs_addition_metadata_and_preservation (test_project.ProjectTests.test_cramfs_addition_metadata_and_preservation) ... ok
 test_forced_cramfs_repack_is_semantically_identical (test_project.ProjectTests.test_forced_cramfs_repack_is_semantically_identical) ... ok
@@ -35,6 +39,12 @@ test_phone_shortcut_opens_actual_native_meecast_window (test_project.ProjectTest
 test_repack_changed_resources_all_files_preserved (test_project.ProjectTests.test_repack_changed_resources_all_files_preserved) ... ok
 test_repack_overflow_and_unknown_path_rejected (test_project.ProjectTests.test_repack_overflow_and_unknown_path_rejected) ... ok
 test_six_tile_theme_resources_and_cramfs_fit (test_project.ProjectTests.test_six_tile_theme_resources_and_cramfs_fit) ... ok
+test_header_crc_precedes_deeper_check_flag (test_upgrade_audit.UpgradeAuditTests.test_header_crc_precedes_deeper_check_flag) ... ok
+test_native_recovery_loop_covers_data_preserves_boot_and_ad (test_upgrade_audit.UpgradeAuditTests.test_native_recovery_loop_covers_data_preserves_boot_and_ad) ... ok
+test_original_fat_bounds_limit_maximum_but_not_minimum_length (test_upgrade_audit.UpgradeAuditTests.test_original_fat_bounds_limit_maximum_but_not_minimum_length) ... ok
+test_original_recovery_caller_does_not_reject_empty_or_short_reads (test_upgrade_audit.UpgradeAuditTests.test_original_recovery_caller_does_not_reject_empty_or_short_reads) ... ok
+test_real_usb_comparison_rejects_stale_metadata_crc (test_upgrade_audit.UpgradeAuditTests.test_real_usb_comparison_rejects_stale_metadata_crc) ... ok
+test_supported_preimages_required_and_evidence_not_recovery_claim (test_upgrade_audit.UpgradeAuditTests.test_supported_preimages_required_and_evidence_not_recovery_claim) ... ok
 test_assets_registry_and_combined_partition_fit (test_youtube.YouTubeTests.test_assets_registry_and_combined_partition_fit) ... ok
 test_callback_and_widget_contracts_unchanged (test_youtube.YouTubeTests.test_callback_and_widget_contracts_unchanged) ... ok
 test_diagnostic_cipher_adaptive_and_denial (test_youtube.YouTubeTests.test_diagnostic_cipher_adaptive_and_denial) ... ok
@@ -43,6 +53,6 @@ test_real_four_results_and_tv_aspect (test_youtube.YouTubeTests.test_real_four_r
 test_version_fix_bounded_and_reversible (test_youtube.YouTubeTests.test_version_fix_bounded_and_reversible) ... ok
 
 ----------------------------------------------------------------------
-Ran 43 tests in 8.959s
+Ran 53 tests in 10.863s
 
 OK

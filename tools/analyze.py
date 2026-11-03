@@ -47,6 +47,7 @@ def analyze(objdump=None):
                                          'CK610 disassembly of registration and callback bodies',
                                          'PC-relative literal loads resolve consistently at 0x90000000'],
                   partitions=fw.partitions, romfs=fw.romfs,
+                  partition_table=fw.table,
                   cramfs=dict(size=fw.cramfs.size, files=len(fw.cramfs.files),
                               crc_valid=True, exact_preservation_noop=True,
                               forced_repack_byte_identical=forced_cramfs==fw.cramfs.raw,
@@ -87,7 +88,7 @@ def analyze(objdump=None):
                                      f'--stop-address={BASE+end:#x}', str(inputs / 'extracted/ecos.bin')],
                                     check=True, capture_output=True, text=True)
             (listing / (name + '.asm')).write_text(result.stdout, encoding='utf-8')
-    print(f'Validated original, 435 resource files, all 5 populated outer CRC slots, ROMFS and cramfs checksums; {len(regs)} registration sequences')
+    print(f'Validated original, 435 resource files, 5 populated outer CRC slots, independent partition-table CRC32, ROMFS and cramfs checksums; {len(regs)} registration sequences')
     for r in selected:
         print(f"{r['name']}: {r['address']:#010x}, register call site {r['registration_pc']:#010x}")
     return report

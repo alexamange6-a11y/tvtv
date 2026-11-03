@@ -1,0 +1,486 @@
+{
+  "status": "OFFLINE_EVIDENCE_NOT_INSTALLABLE",
+  "factory_sha256": "3395ffe1989e78a1e4496c91246b8b84f3efcd16ca9ee6d8606691523a03aa4c",
+  "ecos_sha256": "64c58484ffaa86996a367c060fcaa46c841f3bcca6d4368b02c17c8b39bf22dc",
+  "header_crc": {
+    "size": 512,
+    "crc_offset": 508,
+    "crc_covered_bytes": 508,
+    "stored_crc32": 3038471687,
+    "calculated_crc32": 3038471687,
+    "crc_valid": true,
+    "tail_bytes_1f9_1fb": [
+      1,
+      1,
+      102
+    ],
+    "flash_offset": 131580,
+    "algorithm": "standard CRC32, seed zero, BE stored u32",
+    "table_partition_crc_slot_offset": 131489,
+    "table_partition_crc_slot_is_separate": true,
+    "native_validator_entry": 2416109888,
+    "native_crc_function": 2416757708,
+    "executed_block": [
+      2416110374,
+      2416110398
+    ],
+    "native_block_outcomes": {
+      "original": true,
+      "stale_crc": false,
+      "recalculated_crc": true
+    },
+    "full_validator_executed": false,
+    "evidence": [
+      {
+        "pc": 2416110374,
+        "file_offset": 191270,
+        "bytes": "0260",
+        "meaning": "CRC seed zero"
+      },
+      {
+        "pc": 2416110376,
+        "file_offset": 191272,
+        "literal_offset": 191488,
+        "value": 136,
+        "instruction": "lrw",
+        "meaning": "header at stack +0x88"
+      },
+      {
+        "pc": 2416110382,
+        "file_offset": 191278,
+        "literal_offset": 191608,
+        "value": 508,
+        "instruction": "lrw",
+        "meaning": "header CRC input length"
+      },
+      {
+        "pc": 2416110384,
+        "file_offset": 191280,
+        "literal_offset": 191612,
+        "value": 2416757708,
+        "instruction": "jsri",
+        "meaning": "native CRC32 function"
+      },
+      {
+        "pc": 2416110386,
+        "file_offset": 191282,
+        "literal_offset": 191536,
+        "value": 1196,
+        "instruction": "lrw",
+        "meaning": "previously decoded stored CRC in stack frame"
+      },
+      {
+        "pc": 2416110392,
+        "file_offset": 191288,
+        "bytes": "0787720f71e1",
+        "meaning": "compare CRC and branch to failure at 9002ee20"
+      },
+      {
+        "pc": 2416110398,
+        "file_offset": 191294,
+        "literal_offset": 191552,
+        "value": 1194,
+        "instruction": "lrw",
+        "meaning": "previously decoded header byte +0x1fa"
+      },
+      {
+        "pc": 2416110404,
+        "file_offset": 191300,
+        "bytes": "07a7072a66e9",
+        "meaning": "zero byte skips remaining payload/OEM checks; original is one"
+      },
+      {
+        "pc": 2416110434,
+        "file_offset": 191330,
+        "bytes": "1e2aa7e8",
+        "meaning": "payload CRC loop skips TABLE index 1"
+      },
+      {
+        "pc": 2416110576,
+        "file_offset": 191472,
+        "literal_offset": 191612,
+        "value": 2416757708,
+        "instruction": "jsri",
+        "meaning": "CRC of enabled partition payload"
+      }
+    ]
+  },
+  "boot_recovery": {
+    "mapping": {
+      "initial_file_base": 1048576,
+      "relocated_file_base": 2482364416,
+      "copied_file_start": 8192,
+      "copied_ram_start": 2482372608,
+      "copied_bytes": 122880,
+      "entry": 2482373632,
+      "entry_file_offset": 9216
+    },
+    "entry": 2482447200,
+    "entry_file_offset": 82784,
+    "filename": "/recovery2.rcv",
+    "filename_file_offset": 113024,
+    "filename_is_installation_instruction": false,
+    "callback_installed_at": 2482403240,
+    "callback_dispatch_pc": 2482373752,
+    "callback_activation_on_user_device_verified": false,
+    "input_read_limit": 4194304,
+    "minimum_file_length_enforced_by_reader_verified": false,
+    "read_length_checks": {
+      "native_blocks_executed": true,
+      "file_io_and_metadata_parse_executed": false,
+      "caller_rejects_only_minus_one": true,
+      "caller_requires_minimum_length": false,
+      "required_buffer_coverage_for_write": 4128768,
+      "caller_gate_cases": [
+        {
+          "read_result": -1,
+          "passed_gate": false
+        },
+        {
+          "read_result": 0,
+          "passed_gate": true
+        },
+        {
+          "read_result": 1,
+          "passed_gate": true
+        },
+        {
+          "read_result": 4128767,
+          "passed_gate": true
+        },
+        {
+          "read_result": 4128768,
+          "passed_gate": true
+        },
+        {
+          "read_result": 4194304,
+          "passed_gate": true
+        }
+      ],
+      "fat_bounds_cases": [
+        {
+          "file_size": 0,
+          "read_end": null
+        },
+        {
+          "file_size": 1,
+          "read_end": 1
+        },
+        {
+          "file_size": 4128767,
+          "read_end": 4128767
+        },
+        {
+          "file_size": 4128768,
+          "read_end": 4128768
+        },
+        {
+          "file_size": 4194304,
+          "read_end": 4194304
+        },
+        {
+          "file_size": 4259840,
+          "read_end": 4194304
+        }
+      ],
+      "limitation": "An empty or short read passes this caller gate; remaining flash loop still uses fixed ranges"
+    },
+    "image_format_validation_before_flash_verified": false,
+    "write_loop": {
+      "start": 131072,
+      "end_exclusive": 4128768,
+      "block_size": 65536,
+      "block_count": 61,
+      "source": "input buffer + same absolute flash offset",
+      "original_instructions_executed": true,
+      "spi_and_display_calls_stubbed": true,
+      "preserved_ranges": [
+        [
+          0,
+          131072
+        ],
+        [
+          4128768,
+          4194304
+        ]
+      ],
+      "includes_device_DATA": true,
+      "erase_wrapper": 2482406676,
+      "write_wrapper": 2482406708,
+      "driver_table": 2482456340,
+      "erase_driver": 2482428560,
+      "write_driver": 2482428704
+    },
+    "physical_recovery_verified": false,
+    "evidence": [
+      {
+        "pc": 1050060,
+        "file_offset": 1484,
+        "literal_offset": 1764,
+        "value": 2482372608,
+        "instruction": "lrw",
+        "meaning": "SPI copy RAM destination"
+      },
+      {
+        "pc": 1050230,
+        "file_offset": 1654,
+        "literal_offset": 1784,
+        "value": 50339840,
+        "instruction": "lrw",
+        "meaning": "SPI read opcode 03 and address 002000"
+      },
+      {
+        "pc": 1050256,
+        "file_offset": 1680,
+        "literal_offset": 1788,
+        "value": 2482495484,
+        "instruction": "lrw",
+        "meaning": "last RAM word of copy loop"
+      },
+      {
+        "pc": 1050306,
+        "file_offset": 1730,
+        "bytes": "35b4350f02e83520e4f7",
+        "meaning": "store final byte, compare and increment destination"
+      },
+      {
+        "pc": 1048810,
+        "file_offset": 234,
+        "literal_offset": 332,
+        "value": 2482373632,
+        "instruction": "lrw",
+        "meaning": "relocated boot main entry"
+      },
+      {
+        "pc": 1048812,
+        "file_offset": 236,
+        "bytes": "c400",
+        "meaning": "jump to relocated boot main"
+      },
+      {
+        "pc": 2482403236,
+        "file_offset": 38820,
+        "literal_offset": 38864,
+        "value": 2482484612,
+        "instruction": "lrw",
+        "meaning": "boot callback structure"
+      },
+      {
+        "pc": 2482403238,
+        "file_offset": 38822,
+        "literal_offset": 38868,
+        "value": 2482403204,
+        "instruction": "lrw",
+        "meaning": "recovery wrapper address"
+      },
+      {
+        "pc": 2482403240,
+        "file_offset": 38824,
+        "bytes": "2796",
+        "meaning": "install recovery callback at structure +8"
+      },
+      {
+        "pc": 2482373744,
+        "file_offset": 9328,
+        "literal_offset": 9456,
+        "value": 2482484612,
+        "instruction": "lrw",
+        "meaning": "boot main reads callback structure"
+      },
+      {
+        "pc": 2482373746,
+        "file_offset": 9330,
+        "bytes": "2782022a01e8d200",
+        "meaning": "load callback +8, test nonzero and call"
+      },
+      {
+        "pc": 2482403208,
+        "file_offset": 38792,
+        "literal_offset": 38808,
+        "value": 2482447200,
+        "instruction": "jsri",
+        "meaning": "wrapper calls real recovery function"
+      },
+      {
+        "pc": 2482447200,
+        "file_offset": 82784,
+        "bytes": "f02500981099209a309b409c509d609e709f",
+        "meaning": "recovery function stack frame"
+      },
+      {
+        "pc": 2482447284,
+        "file_offset": 82868,
+        "bytes": "6233",
+        "meaning": "allocate 1<<22 byte input buffer"
+      },
+      {
+        "pc": 2482447316,
+        "file_offset": 82900,
+        "literal_offset": 83252,
+        "value": 2482477440,
+        "instruction": "lrw",
+        "meaning": "load recovery filename pointer"
+      },
+      {
+        "pc": 2482447318,
+        "file_offset": 82902,
+        "bytes": "c3126433",
+        "meaning": "pass buffer and 1<<22 byte read limit"
+      },
+      {
+        "pc": 2482447322,
+        "file_offset": 82906,
+        "literal_offset": 83256,
+        "value": 2482452616,
+        "instruction": "jsri",
+        "meaning": "read recovery file wrapper"
+      },
+      {
+        "pc": 2482452600,
+        "file_offset": 88184,
+        "literal_offset": 88196,
+        "value": 2482449812,
+        "instruction": "jsri",
+        "meaning": "file reader below wrappers; not established as an image validator"
+      },
+      {
+        "pc": 2482447324,
+        "file_offset": 82908,
+        "bytes": "a20f04e0",
+        "meaning": "read-result gate compares only against -1; any other result continues"
+      },
+      {
+        "pc": 2482451722,
+        "file_offset": 87306,
+        "bytes": "7387",
+        "meaning": "read FAT directory-entry file size at +0x1c"
+      },
+      {
+        "pc": 2482451900,
+        "file_offset": 87484,
+        "bytes": "6d123d1cd70c7d0a",
+        "meaning": "read end is min(offset+requested length, file size)"
+      },
+      {
+        "pc": 2482452228,
+        "file_offset": 87812,
+        "bytes": "096001f0092c",
+        "meaning": "EOF path returns zero; error path returns -1"
+      },
+      {
+        "pc": 2482452242,
+        "file_offset": 87826,
+        "bytes": "9212",
+        "meaning": "return FAT-reader byte count from r9"
+      },
+      {
+        "pc": 2482447806,
+        "file_offset": 83390,
+        "bytes": "0d601e33da63",
+        "meaning": "progress=0, flash start=1<<17, block count=61"
+      },
+      {
+        "pc": 2482447812,
+        "file_offset": 83396,
+        "literal_offset": 83436,
+        "value": 4128768,
+        "instruction": "lrw",
+        "meaning": "exclusive flash loop end"
+      },
+      {
+        "pc": 2482447814,
+        "file_offset": 83398,
+        "bytes": "4ff7",
+        "meaning": "branch to flash loop at 93f72466"
+      },
+      {
+        "pc": 2482447462,
+        "file_offset": 83046,
+        "bytes": "e2120333",
+        "meaning": "erase arguments: flash offset and 1<<16 bytes"
+      },
+      {
+        "pc": 2482447466,
+        "file_offset": 83050,
+        "literal_offset": 83336,
+        "value": 2482406676,
+        "instruction": "jsri",
+        "meaning": "erase dispatch wrapper"
+      },
+      {
+        "pc": 2482447468,
+        "file_offset": 83052,
+        "bytes": "e212c312e31c0433",
+        "meaning": "write arguments: flash offset, buffer+offset, 1<<16 bytes"
+      },
+      {
+        "pc": 2482447476,
+        "file_offset": 83060,
+        "literal_offset": 83340,
+        "value": 2482406708,
+        "instruction": "jsri",
+        "meaning": "write dispatch wrapper"
+      },
+      {
+        "pc": 2482447498,
+        "file_offset": 83082,
+        "bytes": "07337e1c46666d1c9e0fe8e7",
+        "meaning": "advance 64KiB and loop until exclusive end"
+      },
+      {
+        "pc": 2482406496,
+        "file_offset": 42080,
+        "literal_offset": 42136,
+        "value": 2482456340,
+        "instruction": "lrw",
+        "meaning": "selected SPI driver table"
+      },
+      {
+        "pc": 2482406510,
+        "file_offset": 42094,
+        "bytes": "0b77079d",
+        "meaning": "store selected driver table at 93f7b59c"
+      },
+      {
+        "pc": 2482406682,
+        "file_offset": 42266,
+        "bytes": "07873787072a01e8d700",
+        "meaning": "erase wrapper calls driver slot +0x0c"
+      },
+      {
+        "pc": 2482406714,
+        "file_offset": 42298,
+        "bytes": "07874787072a02e8d700",
+        "meaning": "write wrapper calls driver slot +0x10"
+      },
+      {
+        "pc": 2482428596,
+        "file_offset": 64180,
+        "literal_offset": 64256,
+        "value": 4294967256,
+        "instruction": "lrw",
+        "meaning": "driver erase command byte D8"
+      },
+      {
+        "pc": 2482428614,
+        "file_offset": 64198,
+        "bytes": "0bbc",
+        "meaning": "store erase opcode in SPI command buffer"
+      },
+      {
+        "pc": 2482428816,
+        "file_offset": 64400,
+        "bytes": "276009b7",
+        "meaning": "driver program command byte 02"
+      }
+    ]
+  },
+  "modified_flash_bin_emitted": false,
+  "recovery_image_emitted": false,
+  "unresolved": [
+    "Caller length gate is insufficient; complete recovery image-format validation is not established",
+    "Boot callback availability and raw IR confirmation keys need hardware confirmation",
+    "Header bytes +1f9/+1fb and other vendor fields are not fully interpreted",
+    "USB recovery has not been exercised on this device; GUI and app lifecycle remain untested"
+  ]
+}

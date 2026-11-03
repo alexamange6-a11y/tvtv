@@ -20,6 +20,35 @@ def sum_be(data):
     return sum(struct.unpack('>' + 'I' * (len(data) // 4), data)) & 0xffffffff
 
 
+def partition_table_check(header):
+    """Check the 512-byte vendor header, including its independent tail CRC.
+
+    The TABLE entry's zero payload-CRC slot is separate. Native USB validation
+    computes seed-zero CRC32 over bytes [0,508), then reads a big-endian u32.
+    """
+    if len(header) != 512 or header[:4] != bytes.fromhex('aabcdefa'):
+        raise ValueError('Partition table header length/magic')
+    if not 1 <= header[4] <= 12:
+        raise ValueError('Partition table header count')
+    stored=u32(header,508,'>')
+    calculated=zlib.crc32(header[:508])
+    if stored != calculated:
+        raise ValueError('Partition table CRC32 mismatch')
+    return dict(size=512,crc_offset=508,crc_covered_bytes=508,
+                stored_crc32=stored,calculated_crc32=calculated,crc_valid=True,
+                tail_bytes_1f9_1fb=list(header[505:508]))
+
+
+def update_partition_table_crc(header):
+    """Recompute only the CRC of a header; never emit a full modified BIN."""
+    if len(header)!=512 or header[:4]!=bytes.fromhex('aabcdefa'):
+        raise ValueError('Partition table header length/magic')
+    result=bytearray(header)
+    struct.pack_into('>I',result,508,zlib.crc32(result[:508]))
+    partition_table_check(result)
+    return bytes(result)
+
+
 def romfs_check(data):
     if data[:8] != b'-rom1fs-':
         raise ValueError('ROMFS magic')
@@ -276,6 +305,7 @@ class Firmware:
             raise ValueError('Unexpected original SHA256')
         if data[0x20004] != 8:
             raise ValueError('Unexpected partition count')
+        self.table = partition_table_check(data[0x20000:0x20200])
         self.partitions = []
         for i in range(8):
             off = 0x20005 + i * 24
@@ -315,4 +345,5 @@ class Firmware:
                              size,start,bytes.fromhex(p['flags']))
             if p['crc_status']=='valid':
                 struct.pack_into('>I',out,p['crc_offset'],zlib.crc32(out[start:start+size]))
+        out[0x20000:0x20200]=update_partition_table_crc(out[0x20000:0x20200])
         return bytes(out)

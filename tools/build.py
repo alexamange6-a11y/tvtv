@@ -18,6 +18,7 @@ from meecast import write_findings, emit_disassembly
 from meecast_theme import create_meecast_theme, render_preview as render_meecast_preview
 from hook import PHONE_KEY, PHONE_WINDOW
 from dump_analysis import require_patch_compatible_dump
+from upgrade_audit import audit as audit_upgrade, emit_disassembly as emit_upgrade_disassembly
 
 
 def build(objdump=None,device_dump=None):
@@ -26,6 +27,13 @@ def build(objdump=None,device_dump=None):
     output = ROOT/'build'
     fw = Firmware((inputs/'firmware/original_firmware.bin').read_bytes())
     ecos = (inputs/'extracted/ecos.bin').read_bytes()
+    upgrade_output=output/'upgrade'
+    upgrade_output.mkdir(exist_ok=True)
+    upgrade_report=audit_upgrade(ecos,fw.raw)
+    (upgrade_output/'findings.json').write_text(json.dumps(upgrade_report,indent=2)+'\n',encoding='utf-8')
+    if objdump:
+        emit_upgrade_disassembly(objdump,inputs/'extracted/ecos.bin',inputs/'firmware/original_firmware.bin',
+                                 upgrade_output/'disassembly')
     if device_dump:
         # Validate the actual device input, but never package private DATA or
         # the uploaded dump. The structural report stays local under build/.
@@ -63,6 +71,13 @@ def build(objdump=None,device_dump=None):
                     original_ecos_sha256=hashlib.sha256(ecos).hexdigest(),
                     device_backup_input_verified=bool(device_dump),
                     device_backup_bytes_included=False,
+                    upgrade_validation=dict(findings='upgrade/findings.json',
+                                            table_header_crc_verified=True,
+                                            table_header_crc_native_comparison_executed=True,
+                                            recovery_flash_loop_instructions_executed=True,
+                                            recovery_spi_calls_stubbed=True,
+                                            full_usb_validator_executed=False,
+                                            recovery_on_device_verified=False),
                     callback_address=START, callback_offset=START-BASE,
                     callback_length=len(hook), callback_envelope_end=LIMIT,
                     original_callback_bytes=ecos[START-BASE:START-BASE+len(hook)].hex(),
@@ -95,7 +110,8 @@ def build(objdump=None,device_dump=None):
                     release_blockers=['Physical recovery method and exact PCB/flash revision not verified',
                                       'GUI lifecycle, 1x1 list focus and return from each app untested',
                                       'Create epilogue finalizer tested with GUI stubs; full create path not verified on device',
-                                      'Non-CRC vendor metadata at partition table tail not fully interpreted',
+                                      'Header CRC confirmed; remaining vendor metadata and full USB validator not fully verified',
+                                      'Boot recovery read-result gate admits short inputs; full image validation and physical recovery unverified',
                                       'Current YouTube/MEGOGO network operation untested'])
     (output/'patch_manifest.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
     if objdump:
@@ -119,6 +135,7 @@ def build(objdump=None,device_dump=None):
         files += [youtube_output/'playback_patch_EXPERIMENTAL.json',youtube_output/'layout_preview_NOT_DEVICE.png']
         files += sorted(youtube_output.glob('*.asm'))
         files += sorted(meecast_output.rglob('*'))
+        files += sorted(upgrade_output.rglob('*'))
         for path in files:
             if path.is_file():
                 info = zipfile.ZipInfo(path.relative_to(output).as_posix(),date_time=(2024,8,2,0,0,0))
