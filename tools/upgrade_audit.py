@@ -14,7 +14,7 @@ import subprocess
 from csky import BASE, half, literal
 from formats import Firmware, partition_table_check, update_partition_table_crc
 from ck610_vm import (HeaderCRCRunner, BootFlashLoopRunner,
-                      BootRecoveryReadGateRunner, BootFATReadBoundsRunner)
+                      BootRecoveryReadGateRunner, BootFATReadBoundsRunner, UpgradeRangeRunner)
 
 ECOS_SHA256 = '64c58484ffaa86996a367c060fcaa46c841f3bcca6d4368b02c17c8b39bf22dc'
 BOOT_BASE = 0x93f5e000  # file + 0x2000 is copied to RAM 0x93f60000
@@ -28,6 +28,11 @@ ECOS_RANGES = {
     'usb_partition_crc': (0x2eb56, 0x2ed06),
     'usb_oem_and_result': (0x2ed06, 0x2ee44),
     'native_crc32': (0xccbcc, 0xcd024),
+    'usb_selection_range': (0x2e3e0, 0x2e5b0),
+    'usb_range_handoff': (0x2f220, 0x2f258),
+    'usb_action_registration': (0x2dd6c, 0x2ddd8),
+    'usb_action_dispatch': (0x2ddd8, 0x2de28),
+    'usb_write_message': (0x2b02c, 0x2b0e4),
 }
 BOOT_RANGES = {
     'boot_main_callback_dispatch': (0x2400, 0x2490),
@@ -176,6 +181,16 @@ def audit(ecos, firmware):
               for label,data in [('original',header),('stale_crc',broken),('recalculated_crc',fixed)]}
     if outcomes!={'original':True,'stale_crc':False,'recalculated_crc':True}:
         raise ValueError('Original native USB CRC comparison block disagrees with parser')
+    range_cases=[]
+    for selection in (0,1,2,3):
+        vm=UpgradeRangeRunner(ecos,firmware,selection).run()
+        range_cases.append(dict(selection=selection,result=vm.r[2],start=vm.load(vm.OUTPUT,4),
+                                length=vm.load(vm.OUTPUT+4,4)))
+    if [(r['result'],r['start'],r['length']) for r in range_cases]!=[
+            (0,0,0x3f0000),(0,0,0x380000),(0,0x380000,0x70000),(0xffffffff,0,0)]:
+        raise ValueError('Original USB selection-range calculation differs')
+    action,target=struct.unpack_from('<II',ecos,0x4af774)
+    if (action,target)!=(0x8f,0x9002b02c):raise ValueError('USB write-message action table differs')
     return dict(
         status='OFFLINE_EVIDENCE_NOT_INSTALLABLE',
         factory_sha256=Firmware.EXPECTED_SHA,ecos_sha256=ECOS_SHA256,
@@ -188,6 +203,17 @@ def audit(ecos, firmware):
                         native_block_outcomes=outcomes,full_validator_executed=False,
                         evidence=evidence),
         boot_recovery=_boot_evidence(firmware),
+        native_usb_ranges=dict(entry=0x9002e3e0,original_instructions_executed=True,
+                               cached_oem_table_service_stubbed=True,
+                               table_fixture='Names, capacities and starts derived from original raw table; OEM decoder not executed',
+                               selection_cases=range_cases,all_selection_includes_BOOT_and_DATA=True,
+                               range_is_not_proof_of_completed_write=True,actual_flash_writer_executed=False,
+                               action_id=action,message_handler=target,
+                               evidence=[_literal(ecos,BASE,0x9002f22e,15,0x9002e3e0,'caller computes selected USB range'),
+                                         _literal(ecos,BASE,0x9002f23e,2,0x8f,'USB action id for range handoff'),
+                                         _literal(ecos,BASE,0x9002e404,15,0x9038200c,'cached OEM table service'),
+                                         _literal(ecos,BASE,0x9002e42a,3,0x904b8e9c,'BOOT comparison in all-range branch'),
+                                         _literal(ecos,BASE,0x9002e524,3,0x904daea0,'DATA comparison for selection two')]),
         modified_flash_bin_emitted=False,recovery_image_emitted=False,
         unresolved=['Caller length gate is insufficient; complete recovery image-format validation is not established',
                     'Boot callback availability and raw IR confirmation keys need hardware confirmation',

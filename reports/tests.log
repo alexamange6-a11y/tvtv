@@ -41,6 +41,9 @@ test_repack_overflow_and_unknown_path_rejected (test_project.ProjectTests.test_r
 test_six_tile_theme_resources_and_cramfs_fit (test_project.ProjectTests.test_six_tile_theme_resources_and_cramfs_fit) ... ok
 test_header_crc_precedes_deeper_check_flag (test_upgrade_audit.UpgradeAuditTests.test_header_crc_precedes_deeper_check_flag) ... ok
 test_native_recovery_loop_covers_data_preserves_boot_and_ad (test_upgrade_audit.UpgradeAuditTests.test_native_recovery_loop_covers_data_preserves_boot_and_ad) ... ok
+test_native_usb_all_range_includes_boot_and_data_but_not_ad (test_upgrade_audit.UpgradeAuditTests.test_native_usb_all_range_includes_boot_and_data_but_not_ad) ... ok
+test_native_usb_other_ranges_use_capacities_including_full_data (test_upgrade_audit.UpgradeAuditTests.test_native_usb_other_ranges_use_capacities_including_full_data) ... ok
+test_native_usb_unknown_range_is_rejected (test_upgrade_audit.UpgradeAuditTests.test_native_usb_unknown_range_is_rejected) ... ok
 test_original_fat_bounds_limit_maximum_but_not_minimum_length (test_upgrade_audit.UpgradeAuditTests.test_original_fat_bounds_limit_maximum_but_not_minimum_length) ... ok
 test_original_recovery_caller_does_not_reject_empty_or_short_reads (test_upgrade_audit.UpgradeAuditTests.test_original_recovery_caller_does_not_reject_empty_or_short_reads) ... ok
 test_real_usb_comparison_rejects_stale_metadata_crc (test_upgrade_audit.UpgradeAuditTests.test_real_usb_comparison_rejects_stale_metadata_crc) ... ok
@@ -53,6 +56,6 @@ test_real_four_results_and_tv_aspect (test_youtube.YouTubeTests.test_real_four_r
 test_version_fix_bounded_and_reversible (test_youtube.YouTubeTests.test_version_fix_bounded_and_reversible) ... ok
 
 ----------------------------------------------------------------------
-Ran 53 tests in 10.863s
+Ran 56 tests in 9.435s
 
 OK

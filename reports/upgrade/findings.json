@@ -475,6 +475,85 @@
       }
     ]
   },
+  "native_usb_ranges": {
+    "entry": 2416108512,
+    "original_instructions_executed": true,
+    "cached_oem_table_service_stubbed": true,
+    "table_fixture": "Names, capacities and starts derived from original raw table; OEM decoder not executed",
+    "selection_cases": [
+      {
+        "selection": 0,
+        "result": 0,
+        "start": 0,
+        "length": 4128768
+      },
+      {
+        "selection": 1,
+        "result": 0,
+        "start": 0,
+        "length": 3670016
+      },
+      {
+        "selection": 2,
+        "result": 0,
+        "start": 3670016,
+        "length": 458752
+      },
+      {
+        "selection": 3,
+        "result": 4294967295,
+        "start": 0,
+        "length": 0
+      }
+    ],
+    "all_selection_includes_BOOT_and_DATA": true,
+    "range_is_not_proof_of_completed_write": true,
+    "actual_flash_writer_executed": false,
+    "action_id": 143,
+    "message_handler": 2416095276,
+    "evidence": [
+      {
+        "pc": 2416112174,
+        "file_offset": 193070,
+        "literal_offset": 193264,
+        "value": 2416108512,
+        "instruction": "jsri",
+        "meaning": "caller computes selected USB range"
+      },
+      {
+        "pc": 2416112190,
+        "file_offset": 193086,
+        "literal_offset": 193268,
+        "value": 143,
+        "instruction": "lrw",
+        "meaning": "USB action id for range handoff"
+      },
+      {
+        "pc": 2416108548,
+        "file_offset": 189444,
+        "literal_offset": 189852,
+        "value": 2419597324,
+        "instruction": "jsri",
+        "meaning": "cached OEM table service"
+      },
+      {
+        "pc": 2416108586,
+        "file_offset": 189482,
+        "literal_offset": 189860,
+        "value": 2420870812,
+        "instruction": "lrw",
+        "meaning": "BOOT comparison in all-range branch"
+      },
+      {
+        "pc": 2416108836,
+        "file_offset": 189732,
+        "literal_offset": 189868,
+        "value": 2421010080,
+        "instruction": "lrw",
+        "meaning": "DATA comparison for selection two"
+      }
+    ]
+  },
   "modified_flash_bin_emitted": false,
   "recovery_image_emitted": false,
   "unresolved": [

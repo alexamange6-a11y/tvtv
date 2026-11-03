@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'tools'))
 from prepare import prepare
 from ck610_vm import (HeaderCRCRunner, BootFlashLoopRunner,
-                      BootRecoveryReadGateRunner, BootFATReadBoundsRunner)
+                      BootRecoveryReadGateRunner, BootFATReadBoundsRunner, UpgradeRangeRunner)
 from formats import update_partition_table_crc
 from upgrade_audit import audit, BOOT_BASE, RECOVERY_ENTRY
 
@@ -84,6 +84,29 @@ class UpgradeAuditTests(unittest.TestCase):
         self.assertEqual(BootFATReadBoundsRunner(self.firmware,1024,128,256).run().read_end_offset,384)
         self.assertIsNone(BootFATReadBoundsRunner(self.firmware,1024,128,1024).run().read_end_offset)
         self.assertEqual(BootFATReadBoundsRunner(self.firmware,1024,0).run().read_end_offset,1024)
+
+    def test_native_usb_all_range_includes_boot_and_data_but_not_ad(self):
+        vm=UpgradeRangeRunner(self.ecos,self.firmware,0).run()
+        self.assertEqual(vm.r[2],0)
+        self.assertEqual(vm.load(vm.OUTPUT,4),0)
+        self.assertEqual(vm.load(vm.OUTPUT+4,4),0x3f0000)
+        self.assertEqual(vm.r[0],vm.initial_registers[0])
+        self.assertEqual(vm.r[8:15],vm.initial_registers[8:15])
+
+    def test_native_usb_other_ranges_use_capacities_including_full_data(self):
+        for selection,start,length in ((1,0,0x380000),(2,0x380000,0x70000)):
+            vm=UpgradeRangeRunner(self.ecos,self.firmware,selection).run()
+            self.assertEqual(vm.r[2],0)
+            self.assertEqual((vm.load(vm.OUTPUT,4),vm.load(vm.OUTPUT+4,4)),(start,length))
+        import struct
+        self.assertEqual(struct.unpack_from('>I',self.firmware,0x20005+6*24+12)[0],1)
+        # DATA range still covers capacity 0x70000 rather than used=1.
+
+    def test_native_usb_unknown_range_is_rejected(self):
+        for selection in (3,99,0xffffffff):
+            vm=UpgradeRangeRunner(self.ecos,self.firmware,selection).run()
+            self.assertEqual(vm.r[2],0xffffffff)
+            self.assertEqual(vm.load(vm.OUTPUT+4,4),0)
 
 
 if __name__=='__main__':unittest.main()

@@ -96,6 +96,8 @@ class Runner:
                     self.r[lo] = self.r[hi]
             elif word & 0xfff0 == 0x0160:
                 self.r[lo] &= 0xffff
+            elif word & 0xfff0 == 0x0030:
+                self.r[lo] = int(not self.carry)
             elif word & 0xfff0 == 0x01f0:
                 self.r[lo] = ~self.r[lo]
             elif word & 0xfff0 in (0x0110,0x0120):
@@ -107,6 +109,8 @@ class Runner:
                 self.r[lo] += value if word & 0xfe00 == 0x2000 else -value
             elif word & 0xfe00 == 0x2a00:
                 self.carry = self.r[lo] != ((word >> 4) & 31)
+            elif word & 0xfe00 == 0x2800:
+                self.r[lo] = ((word >> 4) & 31)-self.r[lo]
             elif word & 0xfff0 == 0x2c10:
                 if not self.r[1]: raise ValueError('Unsigned division by zero')
                 self.r[lo] //= self.r[1]
@@ -119,9 +123,16 @@ class Runner:
                 self.r[lo] = 1<<((word>>4)&31)
             elif word & 0xfe00 == 0x3400:
                 self.r[lo] |= 1<<((word>>4)&31)
+            elif word & 0xfe00 == 0x3600:
+                self.carry=bool(self.r[lo] & (1<<((word>>4)&31)))
             elif word & 0xff00 in (0x0f00,0x0c00):
                 self.carry = (self.r[lo] != self.r[hi] if word & 0xff00 == 0x0f00
                               else self.r[lo] >= self.r[hi])
+            elif word & 0xff00 == 0x0d00:
+                def signed(value):return value if value<0x80000000 else value-0x100000000
+                self.carry=signed(self.r[lo])<signed(self.r[hi])
+            elif word & 0xff00 == 0x1d00:
+                self.r[lo] += self.r[hi]*2
             elif word & 0xff00 == 0x1c00:
                 self.r[lo] += self.r[hi]
             elif word & 0xff00 == 0x1e00:
@@ -353,3 +364,49 @@ class BootFATReadBoundsRunner(BootFlashLoopRunner):
         Runner.run(self,stop_at=(self.CLAMP_END,self.EMPTY_OR_OFFSET_PAST_EOF))
         self.read_end_offset=self.r[13] if self.pc==self.CLAMP_END else None
         return self
+
+
+class UpgradeRangeRunner(Runner):
+    """Execute native USB range calculation with an explicit table-service stub.
+
+    The cached OEM table is represented by its relevant decoded fields from
+    the known factory table. This does not execute the OEM parser or writer.
+    """
+    OUTPUT=0x92000200
+    HEAP=0x92001000
+
+    def __init__(self,ecos,firmware,selection):
+        super().__init__(ecos,b'')
+        self.pc=0x9002e3e0
+        self.r[2]=selection&0xffffffff
+        self.r[3]=self.OUTPUT
+        self.table=bytearray(0x230)
+        self.table[4]=firmware[0x20004]
+        if self.table[4]!=8:raise ValueError('Unsupported OEM table fixture count')
+        for i in range(8):
+            raw=0x20005+i*24;decoded=i*45
+            self.table[decoded+5:decoded+13]=firmware[raw:raw+8]
+            capacity,used,start=struct.unpack_from('>III',firmware,raw+8)
+            struct.pack_into('<I',self.table,decoded+13,capacity)
+            struct.pack_into('<I',self.table,decoded+25,start)
+
+    def stub(self,target):
+        if target==0x900d2fa0:
+            return super().stub(target)
+        args=self.r[2:8]
+        self.calls.append(dict(target=target,args=args))
+        result=0
+        if target==0x90081100:
+            if args[0]!=len(self.table):raise ValueError('Unexpected OEM table allocation')
+            result=self.HEAP
+        elif target==0x9047768c:
+            if args[:3]!=[self.HEAP,0,len(self.table)]:raise ValueError('Unexpected OEM clear')
+            self.write(self.HEAP,bytes(len(self.table)))
+        elif target==0x9038200c:
+            if args[0]!=self.HEAP:raise ValueError('Unexpected OEM table destination')
+            self.write(self.HEAP,self.table)
+        elif target==0x900811dc:
+            if args[0]!=self.HEAP:raise ValueError('Unexpected OEM table free')
+        else:raise ValueError(f'Unstubbed range-calculation call {target:#x}')
+        for i in range(2,8):self.r[i]=0xcccc0000+i
+        self.r[2]=result
